@@ -5,26 +5,25 @@ def main():
     #Check arg
     check_arg();
 
+    #Trying to open image unless File Not Found or Invalid Input
     try:
-        before = Image.open(sys.argv[1])
-       
+        before = Image.open(sys.argv[1]) 
     except OSError:
         sys.exit("Invalid input")
     except FileNotFoundError:
-    	sys.exit("File not found")
-    	
+        sys.exit("File not found")
+    
+    # Opening the shirt
     shirt = Image.open("shirt.png")
-    
-    crpd = ImageOps.fit(shirt, size=(before.size[0], shirt.size[1]))
-    
-    after = Image.new(mode=before.mode, size=before.size)
- 
-    after.paste(crpd)
-    after.paste(before, box=(0, before.size[1]))
-    
-    after.save(sys.argv[2], format=before.format)
 
+    # Cropping the bigger user image
+    crpd = ImageOps.fit(before, (shirt.size[0], shirt.size[1]))
     
+    # Pasting the shirt in cropped image
+    crpd.paste(shirt, mask=shirt)
+    crpd = crpd.convert('RGB')
+
+    crpd.save(sys.argv[2], format=before.format)
 
 
 def check_arg():
